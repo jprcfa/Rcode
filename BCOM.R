@@ -12,5 +12,7 @@ g <- ggplot(BCOM6, aes(x = X., y = BCOM, color = Year, shape = Year))
 g + geom_point() + theme_light() +
   geom_hline(yintercept = 0) + geom_vline(xintercept = 0) +
   geom_smooth(method = lm) + facet_grid(~ Year) +
-  xlab("Dollar % Change") + ylab("BCOM % Change")
+  labs(x = "Dollar % Change", y = "BCOM % Change", title = "Rolling 6m")
 
+lm <- lm(X. ~ BCOM, subset(BCOM, Year == "90"))
+summary(lm)$r.squared
