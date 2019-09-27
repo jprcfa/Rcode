@@ -15,4 +15,5 @@ g + geom_point() + theme_light() +
   labs(x = "Dollar % Change", y = "BCOM % Change", title = "Rolling 6m")
 
 lm <- lm(X. ~ BCOM, subset(BCOM, Year == "90"))
-summary(lm)$r.squared
+summary(lm)
+str(summary(lm))
