@@ -27,9 +27,15 @@ M <- sapply(returns.xts, function(x) sum(is.na(x))); M[M>0]
 
 #remove tickers with missing data
 returns5yr <- subset(returns5yr, select = -c(dow, flow, jo, goog))
-returns4yr <- subset(returns4yr, select = -c(dow, jo, goog))
+returns4yr <- subset(returns4yr, select = -c(dow))
 returns2yr <- subset(returns2yr, select = -c(dow))
 
 #calculate and display correlations
 corr <- cor(returns2yr) 
-corrplot(corr, method= "number", type = "lower", order = "hclust")
+corrplot(corr, method= "circle", order = "hclust", addrect = 3)
+
+res1 <- cor.mtest(returns2yr, conf.level = .95)
+res2 <- cor.mtest(returns2yr, conf.level = .99)
+
+corrplot(corr, p.mat = res1$p, sig.level = .05)
+
