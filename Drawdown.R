@@ -13,7 +13,7 @@ returns.xts <- Return.calculate(prices.xts, method = c("discrete"))
 returns.xts <- returns.xts[-1,]
 
 chart.Drawdown(returns.xts["2010::",], legend.loc = "bottomleft", plot.engine = "ggplot2")
-table.Drawdowns(returns.xts["2010::",1], top = 10)
+table.Drawdowns(returns.xts["2016::",1], top = 10)
 
 ?chart.Drawdown
 
