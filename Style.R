@@ -15,6 +15,9 @@ chart.Drawdown(style.xts["2005::",c(1:4, 16, 17)], legend.loc = "bottomleft", pl
 table.Drawdowns(style.xts["2000::",1], top = 10)
 
 chart.RollingStyle(style.xts["2005::",17],style.xts[,1:4], method="constrained", width=24, cex.legend = .7, colorset=tol12qualitative, las=1)
+chart.RollingStyle(style.xts["2005::",17],style.xts[,1:4], method="unconstrained", width=24, cex.legend = .7, colorset=tol12qualitative, las=1)
+chart.RollingStyle(style.xts["2005::",17],style.xts[,1:4], method="normalized", width=24, cex.legend = .7, colorset=tol12qualitative, las=1)
+
 chart.RollingStyle(style.xts["2005::",17],style.xts["2005::",c(6:11,13:15,5,12)], method="unconstrained", width=24, cex.legend = .7, colorset=tol12qualitative, las=1)
 chart.RollingStyle(style.xts["2005::",17],style.xts[,c(5:15)], method="constrained", width=24, cex.legend = .7, colorset=tol12qualitative, las=1)
 
