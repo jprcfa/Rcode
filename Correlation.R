@@ -32,7 +32,7 @@ returns2yr <- subset(returns2yr, select = -c(dow))
 
 #calculate and display correlations
 corr <- cor(returns2yr) 
-corrplot(corr, method= "circle", order = "hclust", addrect = 5)
+corrplot(corr, method= "circle", order = "hclust", addrect = 10)
 
 #with p-values
 res1 <- cor.mtest(returns2yr, conf.level = .95)

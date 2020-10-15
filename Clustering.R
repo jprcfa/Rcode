@@ -4,7 +4,7 @@ library(PerformanceAnalytics)
 library(readr)
 library(xts)
 
-prices <- read.csv("O:/Administration/Employee Folders/Jason's Folder/R Data/OPCM.csv")
+prices <- read.csv("O:/Administration/Employee Folders/Jason's Folder/R Data/OPCM DE.csv")
 date <- as.Date(prices$Date, format = "%m/%d/%Y")
 prices$Date <- date
 prices.xts <- xts(prices[,-1], order.by = prices[,1])
@@ -14,9 +14,9 @@ returns.xts <- Return.calculate(prices.xts, method = c("log"))
 returns.xts <- returns.xts[-1,]
 
 #sub set years to look at
-returns2yr <- returns.xts['2016-11::']
-returns4yr <- returns.xts['2014-11::']
-returns5yr <- returns.xts['2013-11::']
+returns2yr <- returns.xts['2018-10::']
+returns4yr <- returns.xts['2016-10::']
+returns5yr <- returns.xts['2015-10::']
 
 #find missing data
 M <- sapply(returns2yr, function(x) sum(is.na(x))); M[M>0]
@@ -25,10 +25,12 @@ M <- sapply(returns5yr, function(x) sum(is.na(x))); M[M>0]
 M <- sapply(returns.xts, function(x) sum(is.na(x))); M[M>0]
 
 #remove tickers with missing data
-returns5yr <- subset(returns5yr, select = -c(jo, baba, syf, dnow))
-returns2yr <- subset(returns2yr, select = -c(jo))
+returns2yr <- subset(returns2yr, select = -c(carr, otis, estc, pd))
 
-
+#remove either sectors or russell indexes
+returns2yr <- subset(returns2yr, select = -c(xlp, xlu, xlf, xlv, xli, xly, xlc, xlb, xle, xlk))
+returns2yr <- subset(returns2yr, select = -c(iwd, iwf, iwn, iwo))
+returns2yr <- subset(returns2yr, select = -c(xlre))
 
 #clustering code from https://rviews.rstudio.com/2017/08/22/stocks/
 log_returns <- returns2yr
@@ -38,7 +40,7 @@ X = cor(log_returns)
 L = eigen(X, symmetric=TRUE)
 
 plot(L$values, ylab="eigenvalues")
-abline(v=9)
+abline(v=10)
 N = 10 # (use 1st 10 eigenvectors, set N larger to reduce regularization)
 P = L$vectors[, 1:N] %*% ((1 / L$values[1:N]) * t(L$vectors[, 1:N]))
 P = P / tcrossprod(sqrt(diag(P)))
@@ -46,13 +48,13 @@ P = P / tcrossprod(sqrt(diag(P)))
 install.packages("igraph")
 install.packages("shiny")
 install.packages("threejs")
-install.packages("threejs", repos="http://cran.rstudio.com/", dependencies=TRUE)
+#install.packages("threejs", repos="http://cran.rstudio.com/", dependencies=TRUE)
 install.packages("httpuv")
 library(igraph)
 library(threejs)
 library(shiny)
 
-threshold = 0.925
+threshold = 0.90
 Q = P * (P > quantile(P, probs=threshold))                           # thresholded precision matrix
 g = graph.adjacency(Q, mode="undirected", weighted=TRUE, diag=FALSE) # ...expressed as a graph
 
