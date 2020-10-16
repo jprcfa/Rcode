@@ -7,6 +7,7 @@ install.packages("stringr")
 install.packages("textdata")
 install.packages("tesseract") 
 install.packages("dplyr")
+install.packages("magick")
 
 library(pdftools)
 library(tesseract)
@@ -16,9 +17,10 @@ library(tidytext)      # For data cleaning of text corpus
 library(ggplot2)
 library(stringr)
 library(dplyr)
+library(magick)
 
-
-setwd("O:/Administration/Employee Folders/Jason's Folder/R Data/IPG")
+setwd("O:/Administration/Employee Folders/Jason's Folder/R Data/IPG Image")
+setwd()
 files <- list.files() #No parameter necessary now since you're in the proper directory
 files1 <- list.files(path="O:/Administration/Employee Folders/Jason's Folder/R Data/IPG", pattern="*.pdf", full.names=TRUE, recursive=FALSE)
 f <- list()
@@ -35,17 +37,31 @@ for (i in 1:length(files1)) {
   #cat(text)
   text2 <- strsplit(text, "\n") %>% unlist()
   allocation <- which(grepl("ASSET ALLOCATION GUIDELINES", text2, ignore.case = TRUE))
-  allocation <- allocation - 5
-  FI <- which(grepl("Fixed Income", text2, ignore.case = TRUE))
-  if (length(FI) > 1) {
-    FI2 <- FI[length(FI)] +5
+  if (length(allocation) == 0) {
+    allocation <- 70
+    allocationend <- allocation + 50
   } else {
-    FI2 <-FI +5
+    allocation <- allocation - 5
+    allocationend <- allocation + 15
   }
-  allocationlines <- c(allocation:FI2)
+  #allocation <- allocation - 5
+  #allocationend <- allocation + 15
+  #FI <- which(grepl("Fixed Income", text2, ignore.case = TRUE))
+  #if (length(FI) > 1) {
+  #  FI2 <- FI[length(FI)] +5
+  #} else {
+  #  FI2 <-FI +5
+  #}
+  allocationlines <- c(allocation:allocationend)
   allocation_extracted <- text2[allocationlines]
-  acct <- which(grepl("Pertaining", text2, ignore.case = TRUE))
+  acct <- which(grepl("ACCOUNTS PERTAINING", text2, ignore.case = TRUE))
   acctend <- which(grepl("COMBINING", text2, ignore.case = TRUE))
+  if (length(acct) == 0) {
+    acct <- 70
+  } 
+  if (length(acctend) == 0) {
+    acctend <- 120
+  } 
   acctlines <- c(acct:acctend)
   acctextract <- text2[acctlines]
   t[i,2] <- paste(allocation_extracted[which(grepl("Domestic", allocation_extracted, ignore.case = TRUE))], collapse = " ")
@@ -68,7 +84,9 @@ test<-cat(t)
 ##########
 eng <- tesseract("eng")
 
-pngfile <- pdftools::pdf_convert("O:/Administration/Employee Folders/Jason's Folder/R Data/IPG/20170314 Abbe Arner - IPG Signed and Executed.pdf", dpi = 600)
+pngfile <- pdftools::pdf_convert("O:/Operations/AdvisorPeak Onboarding/onboarding work in progress docs/IPGs/20190417 Goldberg, David IPG Signed and Executed (trust and IRAs).pdf", dpi = 600)
+
+
 text <- tesseract::ocr(pngfile)
 cat(text)
 text
