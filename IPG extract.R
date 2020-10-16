@@ -17,6 +17,7 @@ library(ggplot2)
 library(stringr)
 library(dplyr)
 
+
 setwd("O:/Administration/Employee Folders/Jason's Folder/R Data/IPG")
 files <- list.files() #No parameter necessary now since you're in the proper directory
 files1 <- list.files(path="O:/Administration/Employee Folders/Jason's Folder/R Data/IPG", pattern="*.pdf", full.names=TRUE, recursive=FALSE)
@@ -24,33 +25,18 @@ f <- list()
 t <- data.frame()
 
 
-IPG <- pdf_text("O:/Administration/Employee Folders/Jason's Folder/R Data/IPG/20190617 Lindskog Foundation IPG Signed and Executed.pdf")
-
-
-setwd("O:/Administration/Employee Folders/Jason's Folder/R Data/IPG Image")
-
-for (i in 1:length(files1)) 
-  f[[i]] <- pdftools::pdf_convert(files1[i])
-
-files2 <- list.files(path="O:/Administration/Employee Folders/Jason's Folder/R Data/IPG Image", pattern="*.png", full.names=TRUE, recursive=FALSE)
-
-
-for (i in 1:length(files2))
-  text <- tesseract::ocr(files2[i])
-
-files1 <- list.files(path="O:/Administration/Employee Folders/Jason's Folder/R Data/IPG", pattern="*.pdf", full.names=TRUE, recursive=FALSE)
-files1length <- len
+files1 <- list.files(path="O:/Operations/AdvisorPeak Onboarding/onboarding work in progress docs/IPGs", pattern="*.pdf", full.names=TRUE, recursive=FALSE)
 t <- data.frame()
 
 for (i in 1:length(files1)) {
   t[i,1] <- files1[i]
   x <- pdftools::pdf_convert(files1[i], dpi = 600)
   text <- tesseract::ocr(x)
-  cat(text)
+  #cat(text)
   text2 <- strsplit(text, "\n") %>% unlist()
-  allocation <- which(grepl("ASSET ALLOCATION GUIDELINES", text2, ignore.case = T))
+  allocation <- which(grepl("ASSET ALLOCATION GUIDELINES", text2, ignore.case = TRUE))
   allocation <- allocation - 5
-  FI <- which(grepl("Fixed Income", text2, ignore.case = T))
+  FI <- which(grepl("Fixed Income", text2, ignore.case = TRUE))
   if (length(FI) > 1) {
     FI2 <- FI[length(FI)] +5
   } else {
@@ -58,15 +44,22 @@ for (i in 1:length(files1)) {
   }
   allocationlines <- c(allocation:FI2)
   allocation_extracted <- text2[allocationlines]
-  t[i,2] <- cat(allocation_extracted[which(grepl("Domestic", allocation_extracted, ignore.case = TRUE))])
-  t[i,3] <- cat(allocation_extracted[which(grepl("Foreign", allocation_extracted, ignore.case = TRUE))])
-  t[i,4] <- cat(allocation_extracted[which(grepl("Natural Resources", allocation_extracted, ignore.case = TRUE))])
-  t[i,5] <- cat(allocation_extracted[which(grepl("REal Estate", allocation_extracted, ignore.case = TRUE))])
-  t[i,6] <- cat(allocation_extracted[which(grepl("Alternative Investments", allocation_extracted, ignore.case = TRUE))])
-  t[i,7] <- cat(allocation_extracted[which(grepl("Fixed Income", allocation_extracted, ignore.case = TRUE))])
-  t[i,8] <- cat(allocation_extracted[which(grepl("Cash", allocation_extracted, ignore.case = TRUE))])
+  acct <- which(grepl("Pertaining", text2, ignore.case = TRUE))
+  acctend <- which(grepl("COMBINING", text2, ignore.case = TRUE))
+  acctlines <- c(acct:acctend)
+  acctextract <- text2[acctlines]
+  t[i,2] <- paste(allocation_extracted[which(grepl("Domestic", allocation_extracted, ignore.case = TRUE))], collapse = " ")
+  t[i,3] <- paste(allocation_extracted[which(grepl("Foreign", allocation_extracted, ignore.case = TRUE))], collapse = " ")
+  t[i,4] <- paste(allocation_extracted[which(grepl("Natural Resources", allocation_extracted, ignore.case = TRUE))], collapse = " ")
+  t[i,5] <- paste(allocation_extracted[which(grepl("Real Estate", allocation_extracted, ignore.case = TRUE))], collapse = " ")
+  t[i,6] <- paste(allocation_extracted[which(grepl("Alternative Investments", allocation_extracted, ignore.case = TRUE))], collapse = " ")
+  t[i,7] <- paste(allocation_extracted[which(grepl("Fixed Income", allocation_extracted, ignore.case = TRUE))], collapse = " ")
+  t[i,8] <- paste(allocation_extracted[which(grepl("Cash", allocation_extracted, ignore.case = TRUE))], collapse = " ")
+  t[i,9] <- paste(acctextract, collapse = " ")
 }
 
+
+write.csv(t, "O:/Administration/Employee Folders/Jason's Folder/R Data/IPG.csv")
 
 files2
 test<-cat(t)
@@ -85,6 +78,9 @@ length(FI)
 text2 <- strsplit(text, "\n") %>% unlist()
 allocation <- which(grepl("ASSET ALLOCATION GUIDELINES", text2, ignore.case = T))
 FI <- which(grepl("Fixed Income", text2, ignore.case = T))
+acct <- which(grepl("Pertaining", text2, ignore.case = T))
+acctend <- acct + 10
+acctlines <- c(acct:acctend)
 
 if (length(FI) > 1) {
   FI2 <- FI[length(FI)]
@@ -100,6 +96,9 @@ allocation2 <- paste(allocation_extracted, collapse = " ")
 allocation2
 DF <- data.frame(allocation2)
 DF
+
+acct <- which(grepl("Pretaining", text2, ignore.case = T))
+acctlines <- c(acct:5)
 
 DE <- allocation_extracted[which(grepl("Domestic", allocation_extracted, ignore.case = TRUE))]
 FE <- allocation_extracted[which(grepl("Foreign", allocation_extracted, ignore.case = TRUE))]
